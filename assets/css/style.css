@@ -255,7 +255,7 @@ button { font-family: inherit; }
   gap: 20px;
   width: max-content;
   height: 100%;
-  animation: fan-scroll 50s linear infinite;
+  animation: fan-scroll 32s linear infinite;
 }
 .fan-wrap:hover .fan-track { animation-play-state: paused; }
 .fan-card {
