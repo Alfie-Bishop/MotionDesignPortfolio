@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHeader();
   initMobileNav();
   initContactForm();
-  initReelPlaceholder();
 
   // Everything below depends on live data fetched from the Google Sheet CMS
   // (assets/js/cms.js) - wait for it before rendering anything that reads
@@ -88,20 +87,6 @@ function initContactForm() {
     // to your form handler (e.g. Formspree, Framer forms, or your own endpoint).
     form.reset();
     if (success) success.classList.add("is-visible");
-  });
-}
-
-function initReelPlaceholder() {
-  const btn = document.querySelector(".reel-play-btn");
-  const frame = document.querySelector(".showreel-frame");
-  if (!btn || !frame) return;
-  btn.addEventListener("click", () => {
-    const video = frame.querySelector("video");
-    if (video) {
-      frame.querySelector(".reel-placeholder")?.remove();
-      video.style.display = "block";
-      video.play().catch(() => {});
-    }
   });
 }
 
