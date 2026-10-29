@@ -588,8 +588,21 @@ button { font-family: inherit; }
    ABOUT PAGE
    ========================================================================= */
 .about-hero { padding: 170px 0 80px; }
-.about-hero-grid { display: grid; grid-template-columns: 1fr 420px; gap: 72px; align-items: start; }
+/* Grid areas keep the portrait next to the title at every width: it sits
+   beside the title+body column on desktop, and directly under the title
+   (before the body copy) once it drops to a single column. */
+.about-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  grid-template-areas: "title portrait" "body portrait";
+  column-gap: 72px;
+  row-gap: 24px;
+  align-items: start;
+}
+.about-hero-title { grid-area: title; }
+.about-hero-body { grid-area: body; }
 .about-hero-grid .portrait-lg {
+  grid-area: portrait;
   width: 100%; aspect-ratio: 4/5; border-radius: var(--radius);
   background: linear-gradient(160deg, #1b1b1e, #0e0e10);
   border: 1px solid var(--line);
@@ -600,14 +613,18 @@ button { font-family: inherit; }
   content: ""; position: absolute; inset: 0;
   background: radial-gradient(circle at 60% 20%, rgba(214,255,63,0.1), transparent 60%);
 }
-.about-hero-grid h1 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 24px; }
+.about-hero-grid h1 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 0; }
 .about-hero-grid p.lead { color: var(--text-muted); font-size: 17px; margin-bottom: 20px; max-width: 540px; }
 
 .about-stats-row { display: flex; gap: 56px; margin-top: 40px; flex-wrap: wrap; }
 .about-stats-row .stat-item .num { font-size: 40px; }
 
 @media (max-width: 900px) {
-  .about-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .about-hero-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: "title" "portrait" "body";
+    row-gap: 28px;
+  }
   .about-hero-grid .portrait-lg { max-width: 280px; }
 }
 
