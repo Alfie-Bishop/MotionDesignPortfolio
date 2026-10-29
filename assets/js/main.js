@@ -3,14 +3,21 @@
    contact form. Runs on every page.
    ========================================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initHeader();
   initMobileNav();
-  initScrollReveal();
-  initLogoMarquee();
   initContactForm();
   initReelPlaceholder();
+
+  // Everything below depends on live data fetched from the Google Sheet CMS
+  // (assets/js/cms.js) - wait for it before rendering anything that reads
+  // PROJECTS / CLIENTS / CATEGORY_LABELS.
+  if (window.CMS_READY) await window.CMS_READY;
+
+  initLogoMarquee();
   initFanWheel();
+  initStatCounts();
+  initScrollReveal();
 });
 
 function initHeader() {
@@ -56,6 +63,15 @@ function initLogoMarquee() {
   const items = CLIENTS.map((c) => `<span class="logo-item">${c.name}</span>`).join("");
   // duplicate the list so the marquee loops seamlessly
   track.innerHTML = items + items;
+}
+
+// Fills any [data-stat="client-count"] element with the live client count
+// from the CMS, so the "15+ clients" style stats never go stale.
+function initStatCounts() {
+  if (typeof CLIENTS === "undefined") return;
+  document.querySelectorAll('[data-stat="client-count"]').forEach((el) => {
+    el.textContent = `${CLIENTS.length}+`;
+  });
 }
 
 function initContactForm() {
@@ -105,21 +121,27 @@ function categoryTagList(categories) {
 
 /* =========================================================================
    HOMEPAGE CAROUSEL
-   Every project thumbnail from the CMS data file, side by side, scrolling
-   left continuously in a seamless loop (same technique as the client logo
+   The projects marked "Highlight" in the CMS, side by side, scrolling left
+   continuously in a seamless loop (same technique as the client logo
    marquee: the deck is duplicated once and the track slides 0 -> -50%),
-   never pausing on hover.
+   never pausing on hover. Falls back to every live project if nothing is
+   marked highlighted yet.
    ========================================================================= */
 function initFanWheel() {
   const track = document.getElementById("fan-track");
   if (!track || typeof PROJECTS === "undefined" || !PROJECTS.length) return;
 
-  const cardHTML = PROJECTS.map(
-    (project) => `
+  const deck = PROJECTS.filter((p) => p.highlighted);
+  const list = deck.length ? deck : PROJECTS;
+
+  const cardHTML = list
+    .map(
+      (project) => `
       <a class="fan-card" href="project.html?p=${project.slug}" aria-label="${project.title}">
         <span class="thumb-bg" style="background:${project.thumb.bg}"></span>
       </a>`
-  ).join("");
+    )
+    .join("");
 
   // duplicated once so the 0 -> -50% translateX loop is seamless
   track.innerHTML = cardHTML + cardHTML;
@@ -127,6 +149,7 @@ function initFanWheel() {
 
 function projectCardHTML(project) {
   const cats = project.categories.join(" ");
+  const meta = [project.client, project.agency].filter(Boolean).join(" · ");
   return `
     <a class="project-card" href="project.html?p=${project.slug}" data-categories="${cats}" data-reveal>
       <div class="card-media">
@@ -137,8 +160,7 @@ function projectCardHTML(project) {
       <div class="card-body">
         <h3>${project.title}</h3>
         <div class="card-meta">
-          <span>${project.client}</span>
-          <span>${project.year}</span>
+          <span>${meta}</span>
         </div>
       </div>
     </a>`;

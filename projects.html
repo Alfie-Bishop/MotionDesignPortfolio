@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Projects — Alfie Bishop</title>
-<meta name="description" content="Selected motion design projects by Alfie Bishop — explainer videos, anamorphic advertising, 3D animation, and video editing." />
+<meta name="description" content="Selected motion design projects by Alfie Bishop — TV ads, explainer videos, and 2D/3D motion graphics." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
     <div class="container">
       <span class="eyebrow">Selected Work</span>
       <h1>Projects</h1>
-      <p class="lead">A collection of explainer films, large-format advertising, 3D work, and edits from the past four years. Filter by category below.</p>
+      <p class="lead">A collection of TV ads, explainer films, and 2D/3D motion work. Filter by category below.</p>
     </div>
   </section>
 
@@ -38,13 +38,9 @@
     <div class="container">
       <div class="filter-bar" id="filter-bar">
         <button class="filter-btn is-active" data-filter="all">All Work</button>
-        <button class="filter-btn" data-filter="explainer">Explainer Videos</button>
-        <button class="filter-btn" data-filter="anamorphic">Anamorphic Advertising</button>
-        <button class="filter-btn" data-filter="3d">3D &amp; Texturing</button>
-        <button class="filter-btn" data-filter="editing">Video Editing</button>
       </div>
 
-      <div class="project-grid" id="project-grid"></div>
+      <div class="project-grid" id="project-grid"><p class="cms-status">Loading projects…</p></div>
     </div>
   </section>
 </main>
@@ -60,27 +56,48 @@
   </div>
 </footer>
 
-<script src="assets/js/data.js"></script>
+<script src="assets/js/cms.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  const grid = document.getElementById("project-grid");
-  grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
+  (async () => {
+    await window.CMS_READY;
 
-  const filterBar = document.getElementById("filter-bar");
-  filterBar.addEventListener("click", (e) => {
-    const btn = e.target.closest(".filter-btn");
-    if (!btn) return;
-    filterBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("is-active"));
-    btn.classList.add("is-active");
-    const filter = btn.dataset.filter;
-    grid.querySelectorAll(".project-card").forEach((card) => {
-      const cats = card.dataset.categories.split(" ");
-      const show = filter === "all" || cats.includes(filter);
-      card.classList.toggle("is-hidden", !show);
+    const grid = document.getElementById("project-grid");
+    const filterBar = document.getElementById("filter-bar");
+
+    if (!PROJECTS.length) {
+      grid.innerHTML = `<p class="cms-status">Couldn't load projects from the CMS right now — try refreshing.</p>`;
+      return;
+    }
+
+    grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
+
+    // Filter buttons are built live from whatever categories exist in the
+    // CMS right now, in the order they first appear.
+    const seen = new Set();
+    PROJECTS.forEach((p) => seen.add(p.categories[0]));
+    const filterButtons = Array.from(seen)
+      .map((cat) => `<button class="filter-btn" data-filter="${cat}">${CATEGORY_LABELS[cat] || cat}</button>`)
+      .join("");
+    filterBar.insertAdjacentHTML("beforeend", filterButtons);
+
+    filterBar.addEventListener("click", (e) => {
+      const btn = e.target.closest(".filter-btn");
+      if (!btn) return;
+      filterBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const filter = btn.dataset.filter;
+      grid.querySelectorAll(".project-card").forEach((card) => {
+        const cats = card.dataset.categories.split(" ");
+        const show = filter === "all" || cats.includes(filter);
+        card.classList.toggle("is-hidden", !show);
+      });
     });
-  });
+
+    initScrollReveal();
+  })();
 </script>
 </body>
 </html>
