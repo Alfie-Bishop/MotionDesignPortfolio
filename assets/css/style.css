@@ -562,9 +562,11 @@ button { font-family: inherit; }
 .pd-description h4, .pd-extra h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-faint); margin-bottom: 20px; }
 
 .pd-extra-media { margin-top: 64px; }
-.pd-extra-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px; }
+.pd-extra-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px; align-items: start; }
 .pd-extra-item { border-radius: var(--radius); overflow: hidden; background: var(--bg-elevated); border: 1px solid var(--line); }
-.pd-extra-item video { width: 100%; aspect-ratio: 9/16; object-fit: cover; background: #000; }
+/* height: auto - the box always matches each video's own native aspect
+   ratio instead of being forced into a fixed shape. */
+.pd-extra-item video { display: block; width: 100%; height: auto; background: #000; }
 .pd-extra-item .pd-extra-label { padding: 12px 16px; font-size: 13px; color: var(--text-muted); }
 
 .pd-nav { display: flex; justify-content: space-between; margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--line); }

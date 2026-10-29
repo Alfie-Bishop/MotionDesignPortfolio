@@ -53,8 +53,8 @@
 
   const btsHTML = project.bts
     ? `
-      <div class="pd-extra-item" style="aspect-ratio:16/9;">
-        <video src="${project.bts}" muted loop playsinline controls style="aspect-ratio:16/9;"></video>
+      <div class="pd-extra-item">
+        <video src="${project.bts}" muted loop playsinline controls></video>
         <div class="pd-extra-label">Behind the scenes</div>
       </div>`
     : "";
