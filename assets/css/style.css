@@ -313,11 +313,11 @@ button { font-family: inherit; }
 /* =========================================================================
    SHOWREEL
    ========================================================================= */
-.showreel-section { padding-top: 0; }
+.showreel-section { padding-top: 48px; }
 .showreel-frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 2/1;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--bg-elevated);
