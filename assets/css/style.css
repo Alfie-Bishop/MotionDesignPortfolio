@@ -261,7 +261,9 @@ button { font-family: inherit; }
   flex: none;
   display: block;
   width: 220px;
-  height: 100%;
+  /* a little shorter than the wrap, centred, so the hover lift has room
+     to rise without its top edge clipping against overflow:hidden */
+  height: calc(100% - 16px);
   border-radius: var(--radius);
   overflow: hidden;
   position: relative;
