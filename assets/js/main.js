@@ -107,11 +107,15 @@ function categoryTagList(categories) {
    HOMEPAGE CAROUSEL
    Every project thumbnail from the CMS data file, side by side, scrolling
    left continuously in a seamless loop (same technique as the client logo
-   marquee: the deck is duplicated once and the track slides 0 -> -50%).
+   marquee: the deck is duplicated once and the track slides 0 -> -50%) and
+   never pausing on hover. A rAF loop continuously scales each card up the
+   closer it drifts to the carousel's centre, so the "focused" card grows
+   while neighbours shrink back down as they pass through.
    ========================================================================= */
 function initFanWheel() {
+  const wrap = document.querySelector(".fan-wrap");
   const track = document.getElementById("fan-track");
-  if (!track || typeof PROJECTS === "undefined" || !PROJECTS.length) return;
+  if (!wrap || !track || typeof PROJECTS === "undefined" || !PROJECTS.length) return;
 
   const cardHTML = PROJECTS.map(
     (project) => `
@@ -122,6 +126,30 @@ function initFanWheel() {
 
   // duplicated once so the 0 -> -50% translateX loop is seamless
   track.innerHTML = cardHTML + cardHTML;
+
+  const cards = Array.from(track.querySelectorAll(".fan-card"));
+  const FOCUS_RADIUS = 360; // px either side of centre where growth applies
+  const MAX_GROWTH = 0.26; // peak card scales up to 1 + this, right at centre
+
+  function updateFanScale() {
+    const wrapRect = wrap.getBoundingClientRect();
+    const centerX = wrapRect.left + wrapRect.width / 2;
+
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const dist = Math.abs(cardCenter - centerX);
+      const t = Math.max(0, 1 - dist / FOCUS_RADIUS);
+      const eased = t * t * (3 - 2 * t); // smoothstep
+      const scale = 1 + MAX_GROWTH * eased;
+      card.style.transform = `scale(${scale.toFixed(3)})`;
+      card.style.zIndex = String(Math.round(eased * 10));
+    });
+
+    requestAnimationFrame(updateFanScale);
+  }
+
+  requestAnimationFrame(updateFanScale);
 }
 
 function projectCardHTML(project) {
