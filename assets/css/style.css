@@ -402,6 +402,10 @@ button { font-family: inherit; }
   .about-teaser .container { grid-template-columns: 1fr; gap: 36px; }
   .about-teaser .portrait { max-width: 280px; aspect-ratio: 4/5; }
 }
+@media (max-width: 600px) {
+  .about-teaser { padding-top: 28px; }
+  .about-teaser .portrait { aspect-ratio: 1/1; }
+}
 
 /* =========================================================================
    CONTACT
