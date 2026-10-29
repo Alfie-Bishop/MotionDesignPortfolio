@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alfie Bishop — Motion Designer</title>
+<meta name="description" content="Alfie Bishop is a motion designer specialising in explainer videos, anamorphic advertising, 3D texturing &amp; animation, and video editing." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo-mark">Alfie Bishop<span>.</span></a>
+    <nav class="main-nav">
+      <a href="index.html" class="is-active">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="index.html#contact" class="nav-cta">Get in touch</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <video autoplay muted loop playsinline src="https://video.gumlet.io/6a999aff4ae273cd71d893d9/6ac678b16d6d4d08c6191d86/main.mp4"></video>
+    </div>
+
+    <div class="container">
+      <div class="hero-intro">
+        <span class="eyebrow">Motion Designer — Based in the UK</span>
+        <h1 class="hero-title">Alfie Bishop</h1>
+        <p class="hero-role">
+          I design and animate explainer videos, anamorphic advertising, and 3D texture &amp; animation work —
+          with four years of agency experience bringing brand stories to life on screen.
+        </p>
+        <div class="hero-actions">
+          <a href="projects.html" class="btn btn-primary">View Projects</a>
+          <a href="index.html#contact" class="btn btn-ghost">Start a project</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fan-wrap">
+      <div class="fan-track" id="fan-track"></div>
+    </div>
+
+    <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+  </section>
+
+  <!-- SHOWREEL -->
+  <section class="section showreel-section">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div>
+          <span class="eyebrow">Showreel</span>
+          <h2>A quick look at the work</h2>
+        </div>
+        <p class="sub">A 60-second cut of explainer, 3D, and advertising work from the last four years. Full projects below.</p>
+      </div>
+
+      <div class="showreel-frame" data-reveal>
+        <video src="assets/video/showreel.mp4" loop muted playsinline style="display:none"></video>
+        <div class="reel-placeholder">
+          <button class="reel-play-btn" aria-label="Play showreel">
+            <svg viewBox="0 0 10 12"><polygon points="0,0 10,6 0,12"/></svg>
+          </button>
+          <p>Showreel — replace assets/video/showreel.mp4 with your reel</p>
+        </div>
+      </div>
+
+      <div class="logo-marquee-wrap" data-reveal>
+        <div class="logo-track"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT TEASER -->
+  <section class="section about-teaser">
+    <div class="container">
+      <div class="portrait" data-reveal>Portrait photo — assets/img/portrait.jpg</div>
+      <div data-reveal>
+        <span class="eyebrow">About</span>
+        <h2>Four years making brands move, across three agencies.</h2>
+        <p>
+          I'm a motion designer covering the full pipeline — from storyboard and 3D modelling through
+          texturing, animation, and final edit. I've worked client-side within agency teams on explainer
+          content, large-format anamorphic advertising, and brand film editing.
+        </p>
+        <div class="stat-row">
+          <div class="stat-item"><div class="num">4+</div><div class="label">Years agency-side</div></div>
+          <div class="stat-item"><div class="num">3</div><div class="label">Agencies</div></div>
+          <div class="stat-item"><div class="num">15+</div><div class="label">Clients worked with</div></div>
+        </div>
+        <div style="margin-top:32px;">
+          <a href="about.html" class="btn btn-ghost">More about me →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact-section" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-info" data-reveal>
+        <span class="eyebrow">Contact</span>
+        <h2>Let's make something move.</h2>
+        <p>Currently open for freelance and agency briefs. Tell me a bit about your project and I'll get back to you within a couple of days.</p>
+        <div class="contact-detail">
+          <a href="mailto:hello@alfiebishop.com">hello@alfiebishop.com</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Instagram</a>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contact-form" data-reveal>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="project-type">What do you need?</label>
+          <input type="text" id="project-type" name="project-type" placeholder="e.g. Explainer video, anamorphic ad, edit..." />
+        </div>
+        <div class="form-field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary submit-btn">Send message</button>
+        <div class="form-success" id="contact-success">Thanks — your message has been noted. (Connect this form to an endpoint to receive it for real.)</div>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <small>© <span id="year"></span> Alfie Bishop. All rights reserved.</small>
+    <div class="footer-links">
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

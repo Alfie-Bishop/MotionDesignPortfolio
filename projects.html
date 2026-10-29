@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projects — Alfie Bishop</title>
+<meta name="description" content="Selected motion design projects by Alfie Bishop — explainer videos, anamorphic advertising, 3D animation, and video editing." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo-mark">Alfie Bishop<span>.</span></a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="projects.html" class="is-active">Projects</a>
+      <a href="about.html">About</a>
+      <a href="index.html#contact" class="nav-cta">Get in touch</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Selected Work</span>
+      <h1>Projects</h1>
+      <p class="lead">A collection of explainer films, large-format advertising, 3D work, and edits from the past four years. Filter by category below.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn is-active" data-filter="all">All Work</button>
+        <button class="filter-btn" data-filter="explainer">Explainer Videos</button>
+        <button class="filter-btn" data-filter="anamorphic">Anamorphic Advertising</button>
+        <button class="filter-btn" data-filter="3d">3D &amp; Texturing</button>
+        <button class="filter-btn" data-filter="editing">Video Editing</button>
+      </div>
+
+      <div class="project-grid" id="project-grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <small>© <span id="year"></span> Alfie Bishop. All rights reserved.</small>
+    <div class="footer-links">
+      <a href="projects.html">Projects</a>
+      <a href="about.html">About</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const grid = document.getElementById("project-grid");
+  grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
+
+  const filterBar = document.getElementById("filter-bar");
+  filterBar.addEventListener("click", (e) => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    filterBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("is-active"));
+    btn.classList.add("is-active");
+    const filter = btn.dataset.filter;
+    grid.querySelectorAll(".project-card").forEach((card) => {
+      const cats = card.dataset.categories.split(" ");
+      const show = filter === "all" || cats.includes(filter);
+      card.classList.toggle("is-hidden", !show);
+    });
+  });
+</script>
+</body>
+</html>
