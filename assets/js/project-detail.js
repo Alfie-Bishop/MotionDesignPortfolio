@@ -75,8 +75,10 @@
 
     <section class="section" style="padding-top:0;">
       <div class="container">
-        <div class="pd-main-media">
-          <video src="${project.mainVideo}" controls poster="${project.poster || ""}"></video>
+        <div class="pd-main-media-wrap">
+          <div class="pd-main-media">
+            <video src="${project.mainVideo}" controls preload="metadata" poster="${project.poster || ""}"></video>
+          </div>
         </div>
 
         ${
@@ -112,4 +114,20 @@
       </div>
     </section>
   `;
+
+  matchMainMediaRatio(main.querySelector(".pd-main-media"));
 })();
+
+// Sizes the main video frame to the video's own aspect ratio (see
+// .pd-main-media in style.css) once its metadata loads. The poster can't be
+// used for this - Gumlet thumbnails are square whatever the video's shape.
+function matchMainMediaRatio(frame) {
+  const video = frame.querySelector("video");
+  const apply = () => {
+    if (video.videoWidth && video.videoHeight) {
+      frame.style.setProperty("--media-ratio", `${video.videoWidth} / ${video.videoHeight}`);
+    }
+  };
+  video.addEventListener("loadedmetadata", apply);
+  apply();
+}

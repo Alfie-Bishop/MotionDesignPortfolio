@@ -549,16 +549,33 @@ button { font-family: inherit; }
 .pd-meta-item .tags { display: flex; gap: 8px; flex-wrap: wrap; }
 .pd-tag { font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--text-muted); }
 
+/* The frame takes the video's own ratio (--media-ratio, set by
+   project-detail.js) but never grows taller than a full-width 16:9 frame:
+   tall/square videos keep that height and shrink in width, centred;
+   wider-than-16:9 videos fill the width and get shorter. */
+.pd-main-media-wrap { container-type: inline-size; }
 .pd-main-media {
-  width: 100%;
-  aspect-ratio: 16/9;
+  --media-ratio: 16 / 9;
+  width: min(100%, 100cqw * 9 / 16 * (var(--media-ratio)));
+  margin: 0 auto;
+  aspect-ratio: var(--media-ratio);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--bg-elevated);
   border: 1px solid var(--line);
   position: relative;
 }
-.pd-main-media video { width: 100%; height: 100%; object-fit: cover; }
+/* the frame already matches the video, so cover only trims the (square)
+   Gumlet poster image - never the video itself */
+.pd-main-media video { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 600px) {
+  /* on phones a 16:9-height cap makes tall videos tiny, so instead let them
+     grow to full width, capped so the whole video fits below the header */
+  .pd-main-media {
+    width: min(100%, (100vh - 120px) * (var(--media-ratio)));
+    width: min(100%, (100svh - 120px) * (var(--media-ratio)));
+  }
+}
 
 .pd-body-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 64px; margin-top: 56px; }
 .pd-body-grid--single { grid-template-columns: 1fr; max-width: 760px; }
