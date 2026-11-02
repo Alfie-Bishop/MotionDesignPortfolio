@@ -93,7 +93,43 @@ function isTrue(v) {
   return String(v).trim().toUpperCase() === "TRUE";
 }
 
+// Opened straight from disk (file://) the page's origin is "null", and
+// Google's CSV export refuses CORS for that. The gviz endpoint can instead
+// be loaded as a <script> (JSONP), which has no CORS check - so local file
+// previews use it and real hosting keeps using the CSV export.
+let cmsJsonpCounter = 0;
+function fetchSheetJsonp(gid) {
+  return new Promise((resolve, reject) => {
+    const cb = `__cmsSheet${cmsJsonpCounter++}`;
+    const script = document.createElement("script");
+    const cleanup = () => {
+      delete window[cb];
+      script.remove();
+    };
+    window[cb] = (resp) => {
+      cleanup();
+      if (resp.status === "error") return reject(new Error("CMS sheet fetch failed (gviz)"));
+      const headers = resp.table.cols.map((c) => (c.label || "").trim());
+      const rows = resp.table.rows.map((r) =>
+        headers.map((_, i) => {
+          const cell = r.c[i];
+          if (!cell) return "";
+          return String(cell.f != null ? cell.f : cell.v != null ? cell.v : "");
+        })
+      );
+      resolve(rowsToObjects([headers, ...rows]));
+    };
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("CMS sheet fetch failed (gviz)"));
+    };
+    script.src = `https://docs.google.com/spreadsheets/d/${CMS_SHEET_ID}/gviz/tq?tqx=out:json;responseHandler:${cb}&headers=1&gid=${gid}`;
+    document.head.appendChild(script);
+  });
+}
+
 async function fetchSheet(gid) {
+  if (location.protocol === "file:") return fetchSheetJsonp(gid);
   const res = await fetch(cmsCsvUrl(gid));
   if (!res.ok) throw new Error(`CMS sheet fetch failed (${res.status})`);
   return rowsToObjects(parseCSV(await res.text()));
