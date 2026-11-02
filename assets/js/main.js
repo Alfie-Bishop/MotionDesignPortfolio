@@ -149,19 +149,15 @@ function categoryTagList(categories) {
 
 /* =========================================================================
    HOMEPAGE CAROUSEL
-   The projects marked "Highlight" in the CMS, side by side, scrolling left
+   Every live project from the CMS, side by side, scrolling left
    continuously in a seamless loop (shares startMarquee with the client
-   logo marquee), never pausing on hover. Falls back to every live project if nothing is
-   marked highlighted yet.
+   logo marquee), never pausing on hover.
    ========================================================================= */
 function initFanWheel() {
   const track = document.getElementById("fan-track");
   if (!track || typeof PROJECTS === "undefined" || !PROJECTS.length) return;
 
-  const deck = PROJECTS.filter((p) => p.highlighted);
-  const list = deck.length ? deck : PROJECTS;
-
-  const cardHTML = list
+  const cardHTML = PROJECTS
     .map(
       (project) => `
       <a class="fan-card" href="project.html?p=${project.slug}" aria-label="${project.title}">
