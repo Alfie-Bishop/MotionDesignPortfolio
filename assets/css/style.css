@@ -246,16 +246,20 @@ button { font-family: inherit; }
   height: 300px;
   margin-top: 56px;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  /* edges fade out; on wide screens the solid band stays a centred
+     ~1600px and everything beyond it fades off towards both sides */
+  --fan-fade: max(6%, calc(50% - 800px));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fan-fade), #000 calc(100% - var(--fan-fade)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fan-fade), #000 calc(100% - var(--fan-fade)), transparent);
 }
+/* scrolled by startMarquee() in main.js */
 .fan-track {
   display: flex;
   align-items: center;
   gap: 20px;
   width: max-content;
   height: 100%;
-  animation: fan-scroll 32s linear infinite;
+  will-change: transform;
 }
 .fan-card {
   flex: none;
@@ -272,11 +276,6 @@ button { font-family: inherit; }
 }
 .fan-card:hover { transform: translateY(-6px); box-shadow: 0 28px 56px -14px rgba(0,0,0,0.65); z-index: 5; }
 .fan-card .thumb-bg { position: absolute; inset: 0; }
-
-@keyframes fan-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
 
 @media (max-width: 1080px) {
   .fan-wrap { height: 240px; }
@@ -350,9 +349,8 @@ button { font-family: inherit; }
   display: flex;
   gap: 72px;
   width: max-content;
-  animation: marquee 32s linear infinite;
+  will-change: transform;
 }
-.logo-track:hover { animation-play-state: paused; }
 .logo-item {
   font-family: "Space Grotesk", sans-serif;
   font-size: 20px;
@@ -363,10 +361,6 @@ button { font-family: inherit; }
   letter-spacing: -0.01em;
 }
 .logo-item:hover { color: var(--text); }
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
 
 /* =========================================================================
    ABOUT TEASER (home)

@@ -60,8 +60,51 @@ function initLogoMarquee() {
   const track = document.querySelector(".logo-track");
   if (!track || typeof CLIENTS === "undefined") return;
   const items = CLIENTS.map((c) => `<span class="logo-item">${c.name}</span>`).join("");
-  // duplicate the list so the marquee loops seamlessly
-  track.innerHTML = items + items;
+  startMarquee(track, items, 60);
+}
+
+/* Seamless left-scrolling loop. Measures one set of items, repeats it until
+   it covers the visible width (so wide screens never show a gap), doubles
+   that, and slides by exactly one copy in pixels. Driven from JS rather than
+   a CSS keyframe so it only starts once the CMS content is in place - iOS
+   Safari freezes a CSS -50% animation that began on an empty track until
+   the phone is rotated. Rebuilds when the width changes or webfonts load. */
+function startMarquee(track, itemsHTML, pxPerSecond) {
+  const wrap = track.parentElement;
+  let anim = null;
+  let lastWidth = 0;
+
+  const build = () => {
+    const wrapWidth = wrap.clientWidth;
+    if (!wrapWidth) return;
+    lastWidth = wrapWidth;
+
+    track.innerHTML = itemsHTML;
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const setWidth = track.scrollWidth + gap;
+    const copies = Math.max(1, Math.ceil(wrapWidth / setWidth));
+    track.innerHTML = itemsHTML.repeat(copies * 2);
+
+    const distance = setWidth * copies;
+    const progress = anim ? anim.effect.getComputedTiming().progress || 0 : 0;
+    if (anim) anim.cancel();
+    anim = track.animate(
+      [{ transform: "translateX(0)" }, { transform: `translateX(-${distance}px)` }],
+      { duration: (distance / pxPerSecond) * 1000, iterations: Infinity }
+    );
+    anim.currentTime = progress * anim.effect.getTiming().duration;
+  };
+
+  build();
+  if (document.fonts) document.fonts.ready.then(build);
+  new ResizeObserver(() => {
+    if (wrap.clientWidth !== lastWidth) build();
+  }).observe(wrap);
+
+  if (track.dataset.hoverPause !== undefined && matchMedia("(hover: hover)").matches) {
+    track.addEventListener("mouseenter", () => anim && anim.pause());
+    track.addEventListener("mouseleave", () => anim && anim.play());
+  }
 }
 
 // Fills any [data-stat="client-count"] element with the live client count
@@ -107,9 +150,8 @@ function categoryTagList(categories) {
 /* =========================================================================
    HOMEPAGE CAROUSEL
    The projects marked "Highlight" in the CMS, side by side, scrolling left
-   continuously in a seamless loop (same technique as the client logo
-   marquee: the deck is duplicated once and the track slides 0 -> -50%),
-   never pausing on hover. Falls back to every live project if nothing is
+   continuously in a seamless loop (shares startMarquee with the client
+   logo marquee), never pausing on hover. Falls back to every live project if nothing is
    marked highlighted yet.
    ========================================================================= */
 function initFanWheel() {
@@ -128,8 +170,7 @@ function initFanWheel() {
     )
     .join("");
 
-  // duplicated once so the 0 -> -50% translateX loop is seamless
-  track.innerHTML = cardHTML + cardHTML;
+  startMarquee(track, cardHTML, 30);
 }
 
 function projectCardHTML(project) {
