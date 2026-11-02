@@ -173,6 +173,36 @@ function initFanWheel() {
   startMarquee(track, cardHTML, 30);
 }
 
+// Hovering a project card's thumbnail plays its main video silently from the
+// start; leaving stops it and shows the thumbnail again. Mouse/trackpad only -
+// on touch screens a tap goes straight to the project. preload="none" on the
+// <video> means nothing downloads until a card is first hovered.
+function initCardPreviews(root) {
+  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+  root.querySelectorAll(".project-card").forEach((card) => {
+    const video = card.querySelector(".card-preview");
+    if (!video) return;
+    let hovering = false;
+    card.addEventListener("mouseenter", () => {
+      hovering = true;
+      video.currentTime = 0;
+      video
+        .play()
+        .then(() => {
+          // the mouse may have left while the video was still loading
+          if (hovering) card.classList.add("is-previewing");
+          else video.pause();
+        })
+        .catch(() => {});
+    });
+    card.addEventListener("mouseleave", () => {
+      hovering = false;
+      card.classList.remove("is-previewing");
+      video.pause();
+    });
+  });
+}
+
 function projectCardHTML(project) {
   const cats = project.categories.join(" ");
   const meta = [project.client, project.agency].filter(Boolean).join(" · ");
@@ -180,6 +210,7 @@ function projectCardHTML(project) {
     <a class="project-card" href="project.html?p=${project.slug}" data-categories="${cats}" data-reveal>
       <div class="card-media">
         <div class="thumb-bg" style="background:${project.thumb.bg}"></div>
+        ${project.mainVideo ? `<video class="card-preview" src="${project.mainVideo}" muted loop playsinline preload="none" aria-hidden="true"></video>` : ""}
         <div class="thumb-overlay"></div>
         <span class="card-tag">${project.thumb.label}</span>
       </div>

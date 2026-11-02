@@ -73,6 +73,7 @@
     }
 
     grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
+    initCardPreviews(grid);
 
     // Filter buttons are built live from whatever categories exist in the
     // CMS right now, in the order they first appear.
