@@ -57,10 +57,11 @@ function initScrollReveal() {
 }
 
 function initLogoMarquee() {
-  const track = document.querySelector(".logo-track");
-  if (!track || typeof CLIENTS === "undefined") return;
+  const tracks = document.querySelectorAll(".logo-track");
+  if (!tracks.length || typeof CLIENTS === "undefined") return;
   const items = CLIENTS.map((c) => `<span class="logo-item">${c.name}</span>`).join("");
-  startMarquee(track, items, 60);
+  // two rows of the same list, the data-reverse one scrolling the other way
+  tracks.forEach((track) => startMarquee(track, items, 110, track.hasAttribute("data-reverse")));
 }
 
 /* Seamless left-scrolling loop. Measures one set of items, repeats it until
@@ -68,8 +69,9 @@ function initLogoMarquee() {
    that, and slides by exactly one copy in pixels. Driven from JS rather than
    a CSS keyframe so it only starts once the CMS content is in place - iOS
    Safari freezes a CSS -50% animation that began on an empty track until
-   the phone is rotated. Rebuilds when the width changes or webfonts load. */
-function startMarquee(track, itemsHTML, pxPerSecond) {
+   the phone is rotated. Rebuilds when the width changes or webfonts load.
+   reverse = scroll right instead of left. */
+function startMarquee(track, itemsHTML, pxPerSecond, reverse = false) {
   const wrap = track.parentElement;
   let anim = null;
   let lastWidth = 0;
@@ -88,8 +90,10 @@ function startMarquee(track, itemsHTML, pxPerSecond) {
     const distance = setWidth * copies;
     const progress = anim ? anim.effect.getComputedTiming().progress || 0 : 0;
     if (anim) anim.cancel();
+    const frames = [{ transform: "translateX(0)" }, { transform: `translateX(-${distance}px)` }];
+    if (reverse) frames.reverse();
     anim = track.animate(
-      [{ transform: "translateX(0)" }, { transform: `translateX(-${distance}px)` }],
+      frames,
       { duration: (distance / pxPerSecond) * 1000, iterations: Infinity }
     );
     anim.currentTime = progress * anim.effect.getTiming().duration;
