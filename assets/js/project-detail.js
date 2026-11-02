@@ -45,8 +45,7 @@
     .map(
       (s) => `
       <div class="pd-extra-item">
-        <video src="${s.src}" muted loop playsinline controls></video>
-        <div class="pd-extra-label">${s.label}</div>
+        <video src="${s.src}" muted loop playsinline controls aria-label="${s.label}"></video>
       </div>`
     )
     .join("");
@@ -54,8 +53,7 @@
   const btsHTML = project.bts
     ? `
       <div class="pd-extra-item">
-        <video src="${project.bts}" muted loop playsinline controls></video>
-        <div class="pd-extra-label">Behind the scenes</div>
+        <video src="${project.bts}" muted loop playsinline controls aria-label="Behind the scenes"></video>
       </div>`
     : "";
 
