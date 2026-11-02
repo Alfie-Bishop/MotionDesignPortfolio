@@ -14,7 +14,7 @@
   --accent-ink: #0a0a0b;
   --radius: 18px;
   --radius-sm: 10px;
-  --container: 1240px;
+  --container: 1400px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -243,14 +243,14 @@ button { font-family: inherit; }
 .fan-wrap {
   position: relative;
   z-index: 1;
+  /* same width as .container's content box, so the faded edges line up
+     with the text and the showreel's logo strip */
+  width: calc(min(100%, var(--container)) - 64px);
+  margin: 56px auto 0;
   height: 300px;
-  margin-top: 56px;
   overflow: hidden;
-  /* edges fade out; on wide screens the solid band stays a centred
-     ~1600px and everything beyond it fades off towards both sides */
-  --fan-fade: max(6%, calc(50% - 800px));
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fan-fade), #000 calc(100% - var(--fan-fade)), transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 var(--fan-fade), #000 calc(100% - var(--fan-fade)), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 /* scrolled by startMarquee() in main.js */
 .fan-track {
@@ -311,7 +311,7 @@ button { font-family: inherit; }
    SHOWREEL
    ========================================================================= */
 .showreel-section { padding-top: 0; }
-/* the reel breaks out of the 1240px container and grows as large as the
+/* the reel breaks out of the --container width and grows as large as the
    screen allows, capped so its full height always fits in the viewport
    below the fixed header (--reel-chrome = header + breathing room) */
 .showreel-container { max-width: none; }
