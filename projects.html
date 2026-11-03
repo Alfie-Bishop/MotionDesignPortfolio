@@ -73,7 +73,7 @@
     }
 
     grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
-    initCardPreviews(grid);
+    const refreshPreviews = initCardPreviews(grid);
 
     // Filter buttons are built live from whatever categories exist in the
     // CMS right now, in the order they first appear.
@@ -95,6 +95,7 @@
         const show = filter === "all" || cats.includes(filter);
         card.classList.toggle("is-hidden", !show);
       });
+      refreshPreviews();
     });
 
     initScrollReveal();

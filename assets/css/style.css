@@ -666,6 +666,20 @@ button { font-family: inherit; }
   .pd-body-grid { grid-template-columns: 1fr; gap: 32px; }
   .pd-extra-row { grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 600px) {
+  /* phones: everything on the project page stacks vertically - the
+     client/agency/category details, the extra videos (each fitting the
+     screen top to bottom) and the previous/next links */
+  .pd-meta-row { flex-direction: column; gap: 20px; }
+  .pd-nav { flex-direction: column; gap: 24px; }
+  .pd-nav a { max-width: 100%; }
+  .pd-extra-row { grid-template-columns: 1fr; }
+  .pd-extra-item video {
+    width: auto; max-width: 100%;
+    max-height: calc(100vh - 120px);
+    max-height: calc(100svh - 120px);
+  }
+}
 
 /* =========================================================================
    ABOUT PAGE

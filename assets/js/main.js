@@ -211,34 +211,86 @@ function initFanWheel() {
   startMarquee(track, cardHTML, 30);
 }
 
-// Hovering a project card's thumbnail plays its main video silently from the
-// start; leaving stops it and shows the thumbnail again. Mouse/trackpad only -
-// on touch screens a tap goes straight to the project. preload="none" on the
-// <video> means nothing downloads until a card is first hovered.
+// Project card previews: the card's main video plays silently from the start
+// over its thumbnail.
+// - Mouse/trackpad: while the card is hovered.
+// - Touch screens (no hover): once a card has sat nearest the middle of the
+//   screen for a second; scrolling another card to the middle stops it.
+// Only one preview plays at a time. preload="none" on the <video> means
+// nothing downloads until a card's preview first starts. Returns a refresh
+// function to call after the grid's layout changes (e.g. filtering).
+const CARD_PREVIEW_DWELL_MS = 1000;
+
 function initCardPreviews(root) {
-  if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-  root.querySelectorAll(".project-card").forEach((card) => {
+  const cards = [...root.querySelectorAll(".project-card")].filter((c) => c.querySelector(".card-preview"));
+  if (!cards.length) return () => {};
+  let active = null;
+
+  const stop = (card) => {
+    card.classList.remove("is-previewing");
+    card.querySelector(".card-preview").pause();
+    if (active === card) active = null;
+  };
+  const start = (card) => {
+    if (active && active !== card) stop(active);
+    active = card;
     const video = card.querySelector(".card-preview");
-    if (!video) return;
-    let hovering = false;
-    card.addEventListener("mouseenter", () => {
-      hovering = true;
-      video.currentTime = 0;
-      video
-        .play()
-        .then(() => {
-          // the mouse may have left while the video was still loading
-          if (hovering) card.classList.add("is-previewing");
-          else video.pause();
-        })
-        .catch(() => {});
+    video.currentTime = 0;
+    video
+      .play()
+      .then(() => {
+        // the card may have been left while the video was still loading
+        if (active === card) card.classList.add("is-previewing");
+        else video.pause();
+      })
+      .catch(() => {});
+  };
+
+  if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    cards.forEach((card) => {
+      card.addEventListener("mouseenter", () => start(card));
+      card.addEventListener("mouseleave", () => stop(card));
     });
-    card.addEventListener("mouseleave", () => {
-      hovering = false;
-      card.classList.remove("is-previewing");
-      video.pause();
-    });
-  });
+    return () => {};
+  }
+
+  // Touch: pick the visible card whose thumbnail is nearest the screen's
+  // centre (and actually crosses it), then wait for it to stay there.
+  let candidate = null;
+  let dwellTimer = null;
+  let scheduled = false;
+
+  const centredCard = () => {
+    const cx = innerWidth / 2, cy = innerHeight / 2;
+    let best = null, bestDist = Infinity;
+    for (const card of cards) {
+      if (!card.offsetParent) continue; // hidden by the category filter
+      const r = card.querySelector(".card-media").getBoundingClientRect();
+      if (cy < r.top || cy > r.bottom) continue;
+      const d = Math.hypot(r.left + r.width / 2 - cx, r.top + r.height / 2 - cy);
+      if (d < bestDist) { best = card; bestDist = d; }
+    }
+    return best;
+  };
+
+  const update = () => {
+    scheduled = false;
+    const next = centredCard();
+    if (next === candidate) return;
+    candidate = next;
+    clearTimeout(dwellTimer);
+    if (active && active !== next) stop(active);
+    if (next) dwellTimer = setTimeout(() => candidate === next && start(next), CARD_PREVIEW_DWELL_MS);
+  };
+  const schedule = () => {
+    if (!scheduled) { scheduled = true; requestAnimationFrame(update); }
+  };
+
+  addEventListener("scroll", schedule, { passive: true });
+  addEventListener("resize", schedule);
+  root.addEventListener("transitionend", schedule); // scroll-reveal fade-ins
+  update();
+  return schedule;
 }
 
 function projectCardHTML(project) {
