@@ -120,20 +120,58 @@ function initStatCounts() {
   });
 }
 
+// The site is static (GitHub Pages), so messages are relayed to Alfie's inbox
+// by FormSubmit (formsubmit.co). The very first submission makes FormSubmit
+// email a one-time activation link to this address; nothing is delivered
+// until that link is clicked.
+const CONTACT_ENDPOINT = "https://formsubmit.co/ajax/alfie.cb@live.co.uk";
+
 function initContactForm() {
   const form = document.querySelector("#contact-form");
   if (!form) return;
-  const success = document.querySelector("#contact-success");
-  form.addEventListener("submit", (e) => {
+  const status = document.querySelector("#contact-success");
+  const button = form.querySelector('button[type="submit"]');
+  const buttonLabel = button.textContent;
+
+  const showStatus = (message, isError) => {
+    status.textContent = message;
+    status.classList.toggle("is-error", isError);
+    status.classList.add("is-visible");
+  };
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-    // No backend is wired up yet. Replace this block with a fetch() call
-    // to your form handler (e.g. Formspree, Framer forms, or your own endpoint).
-    form.reset();
-    if (success) success.classList.add("is-visible");
+
+    const data = Object.fromEntries(new FormData(form));
+    if (data._honey) return; // hidden field only bots fill in
+    data._subject = `Portfolio message from ${data.name}${data.subject ? `: ${data.subject}` : ""}`;
+    data._replyto = data.email;
+    data._template = "table";
+
+    button.disabled = true;
+    button.textContent = "Sending…";
+    status.classList.remove("is-visible");
+    try {
+      const res = await fetch(CONTACT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || String(result.success) !== "true") throw new Error(result.message || res.status);
+      form.reset();
+      showStatus("Thanks — your message has been sent. I'll get back to you soon.", false);
+    } catch (err) {
+      console.error("Contact form failed:", err);
+      showStatus("Sorry, that didn't send. Please email me directly at alfie.cb@live.co.uk.", true);
+    } finally {
+      button.disabled = false;
+      button.textContent = buttonLabel;
+    }
   });
 }
 

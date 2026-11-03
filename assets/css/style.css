@@ -14,7 +14,7 @@
   --accent-ink: #0a0a0b;
   --radius: 18px;
   --radius-sm: 10px;
-  --container: 1920px;
+  --container: 1440px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -493,6 +493,8 @@ button { font-family: inherit; }
 .form-note { font-size: 13px; color: var(--text-faint); margin-top: 14px; }
 .form-success { display: none; padding: 16px; border-radius: var(--radius-sm); background: rgba(214,255,63,0.1); border: 1px solid rgba(214,255,63,0.3); color: var(--accent); font-size: 14px; margin-top: 16px; }
 .form-success.is-visible { display: block; }
+.form-success.is-error { background: rgba(255,99,99,0.1); border-color: rgba(255,99,99,0.35); color: #ff8a8a; }
+.submit-btn:disabled { opacity: 0.6; cursor: wait; }
 
 @media (max-width: 860px) {
   .contact-grid { grid-template-columns: 1fr; gap: 40px; }
