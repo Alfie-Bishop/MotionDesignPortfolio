@@ -3,6 +3,19 @@
    contact form. Runs on every page.
    ========================================================================= */
 
+// Belt-and-suspenders alongside the oncontextmenu attribute on each <video>:
+// some privacy extensions (Brave Shields, uBlock strict mode, etc.) strip
+// inline on* attributes, so the block is also wired up here from an external
+// file, at the document level, on the capture phase - which runs before any
+// per-element handler and also covers card-preview videos injected later.
+document.addEventListener(
+  "contextmenu",
+  (e) => {
+    if (e.target.closest("video")) e.preventDefault();
+  },
+  true
+);
+
 document.addEventListener("DOMContentLoaded", async () => {
   initHeader();
   initMobileNav();
