@@ -62,6 +62,18 @@
   document.getElementById("year").textContent = new Date().getFullYear();
 
   const UNLOCK_PASSWORD = "Alfie01";
+  const UNLOCK_STORAGE_KEY = "projectsUnlockedUntil";
+  const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
+  function getUnlockExpiry() {
+    return Number(localStorage.getItem(UNLOCK_STORAGE_KEY)) || 0;
+  }
+  function isUnlockActive() {
+    return Date.now() < getUnlockExpiry();
+  }
+  function startUnlock() {
+    localStorage.setItem(UNLOCK_STORAGE_KEY, String(Date.now() + UNLOCK_DURATION_MS));
+  }
 
   (async () => {
     await window.CMS_READY;
@@ -74,9 +86,27 @@
       return;
     }
 
-    let isUnlocked = false;
+    // The unlock survives a refresh or a trip into a project and back - it's
+    // just a timestamp in localStorage, re-checked (and re-locked) here.
+    let isUnlocked = isUnlockActive();
     let activeFilter = "all";
     let refreshPreviews = () => {};
+    let relockTimer = null;
+
+    function scheduleRelock() {
+      clearTimeout(relockTimer);
+      if (!isUnlocked) return;
+      const remaining = getUnlockExpiry() - Date.now();
+      if (remaining <= 0) {
+        isUnlocked = false;
+        renderGrid();
+      } else {
+        relockTimer = setTimeout(() => {
+          isUnlocked = false;
+          renderGrid();
+        }, remaining);
+      }
+    }
 
     function disclaimerCardHTML() {
       if (isUnlocked) {
@@ -121,6 +151,7 @@
         const feedback = document.getElementById("unlock-feedback");
         if (input.value === UNLOCK_PASSWORD) {
           isUnlocked = true;
+          startUnlock();
           renderGrid();
         } else {
           feedback.textContent = "Incorrect password — try again.";
@@ -137,6 +168,7 @@
       applyFilter(activeFilter);
       initScrollReveal();
       bindUnlockForm();
+      scheduleRelock();
     }
 
     // Filter buttons are built live from whatever categories exist in the
