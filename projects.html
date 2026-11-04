@@ -61,6 +61,8 @@
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
+  const UNLOCK_PASSWORD = "Alfie01";
+
   (async () => {
     await window.CMS_READY;
 
@@ -72,8 +74,70 @@
       return;
     }
 
-    grid.innerHTML = PROJECTS.map(projectCardHTML).join("");
-    const refreshPreviews = initCardPreviews(grid);
+    let isUnlocked = false;
+    let activeFilter = "all";
+    let refreshPreviews = () => {};
+
+    function disclaimerCardHTML() {
+      if (isUnlocked) {
+        return `
+          <div class="project-card disclaimer-card" data-reveal>
+            <div class="disclaimer-body">
+              <h3>Disclaimer</h3>
+              <p>Unlocked — every project is now visible.</p>
+            </div>
+          </div>`;
+      }
+      return `
+        <div class="project-card disclaimer-card" data-reveal>
+          <div class="disclaimer-body">
+            <h3>Disclaimer</h3>
+            <p>The hidden projects are locked due to them being linked to the accompanying agency. In order to view the full list, enter the password.</p>
+            <form class="disclaimer-form" id="unlock-form">
+              <input type="password" id="unlock-password" placeholder="Password" autocomplete="off" />
+              <button type="submit" class="btn btn-primary">Unlock</button>
+            </form>
+            <p class="disclaimer-feedback" id="unlock-feedback"></p>
+          </div>
+        </div>`;
+    }
+
+    function applyFilter(filter) {
+      activeFilter = filter;
+      grid.querySelectorAll(".project-card[data-categories]").forEach((card) => {
+        const cats = card.dataset.categories.split(" ");
+        const show = filter === "all" || cats.includes(filter);
+        card.classList.toggle("is-hidden", !show);
+      });
+      refreshPreviews();
+    }
+
+    function bindUnlockForm() {
+      const form = document.getElementById("unlock-form");
+      if (!form) return;
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("unlock-password");
+        const feedback = document.getElementById("unlock-feedback");
+        if (input.value === UNLOCK_PASSWORD) {
+          isUnlocked = true;
+          renderGrid();
+        } else {
+          feedback.textContent = "Incorrect password — try again.";
+          feedback.classList.add("is-error");
+          input.value = "";
+          input.focus();
+        }
+      });
+    }
+
+    function renderGrid() {
+      grid.innerHTML = disclaimerCardHTML() + PROJECTS.map((p) => projectCardHTML(p, isUnlocked)).join("");
+      refreshPreviews = initCardPreviews(grid);
+      applyFilter(activeFilter);
+      initScrollReveal();
+      bindUnlockForm();
+    }
 
     // Filter buttons are built live from whatever categories exist in the
     // CMS right now, in the order they first appear.
@@ -89,16 +153,10 @@
       if (!btn) return;
       filterBar.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
-      const filter = btn.dataset.filter;
-      grid.querySelectorAll(".project-card").forEach((card) => {
-        const cats = card.dataset.categories.split(" ");
-        const show = filter === "all" || cats.includes(filter);
-        card.classList.toggle("is-hidden", !show);
-      });
-      refreshPreviews();
+      applyFilter(btn.dataset.filter);
     });
 
-    initScrollReveal();
+    renderGrid();
   })();
 </script>
 </body>

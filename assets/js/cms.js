@@ -165,6 +165,7 @@ function mapProjectRow(row) {
     social,
     description: row["Content"] || "",
     highlighted: isTrue(row["Highlight"]),
+    locked: isTrue(row["Locked"]),
     live: isTrue(row["Live"]),
   };
 }

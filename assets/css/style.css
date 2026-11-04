@@ -595,6 +595,60 @@ button { font-family: inherit; }
 .project-card .card-body h3 { font-size: 19px; margin-bottom: 8px; }
 .project-card .card-meta { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 13px; }
 
+/* Locked projects (CMS "Locked" column): thumbnail greyed out, title
+   swapped for the agency only, not a link until the password unlocks it. */
+.project-card.is-locked { cursor: default; }
+.project-card.is-locked .card-media .thumb-bg { filter: grayscale(1) brightness(0.45); }
+.project-card.is-locked:hover .card-media .thumb-bg { transform: none; }
+.project-card.is-locked .card-tag { display: none; }
+.project-card .lock-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(20,20,22,0.55);
+  color: var(--text-muted);
+}
+.project-card .lock-overlay svg { width: 26px; height: 26px; stroke: var(--text-muted); }
+.project-card .lock-overlay span {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.project-card.is-locked .card-body h3 { color: var(--text-muted); }
+
+/* Disclaimer / password-unlock card - a non-project item in the grid */
+.disclaimer-card {
+  background: #000;
+  border: 2px solid var(--accent);
+  display: flex;
+  align-items: center;
+}
+.disclaimer-card .disclaimer-body { padding: 28px; width: 100%; }
+.disclaimer-card h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 19px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.disclaimer-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+.disclaimer-form { display: flex; gap: 10px; }
+.disclaimer-form input {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+.disclaimer-form input:focus { outline: none; border-color: var(--accent); }
+.disclaimer-form button { flex: none; padding: 11px 20px; font-size: 13px; }
+.disclaimer-feedback { color: var(--accent); font-size: 13px; margin: 10px 0 0; min-height: 16px; }
+.disclaimer-feedback.is-error { color: #ff6b6b; }
+
+@media (max-width: 620px) {
+  .project-grid { grid-auto-flow: row; }
+  .disclaimer-card { grid-column: 1 / -1; }
+}
+
 /* =========================================================================
    PROJECT DETAIL
    ========================================================================= */

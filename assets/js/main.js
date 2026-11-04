@@ -199,7 +199,10 @@ function initFanWheel() {
   const track = document.getElementById("fan-track");
   if (!track || typeof PROJECTS === "undefined" || !PROJECTS.length) return;
 
+  // Locked (agency-confidential) projects never surface here, same as on
+  // the Projects page.
   const cardHTML = PROJECTS
+    .filter((project) => !project.locked)
     .map(
       (project) => `
       <a class="fan-card" href="project.html?p=${project.slug}" aria-label="${project.title}">
@@ -293,8 +296,27 @@ function initCardPreviews(root) {
   return schedule;
 }
 
-function projectCardHTML(project) {
+function projectCardHTML(project, forceUnlocked) {
   const cats = project.categories.join(" ");
+  const locked = project.locked && !forceUnlocked;
+
+  if (locked) {
+    return `
+      <div class="project-card is-locked" data-categories="${cats}" data-reveal>
+        <div class="card-media">
+          <div class="thumb-bg" style="background:${project.thumb.bg}"></div>
+          <div class="thumb-overlay"></div>
+          <div class="lock-overlay">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            <span>Locked</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>${project.agency}</h3>
+        </div>
+      </div>`;
+  }
+
   const meta = [project.client, project.agency].filter(Boolean).join(" · ");
   return `
     <a class="project-card" href="project.html?p=${project.slug}" data-categories="${cats}" data-reveal>
