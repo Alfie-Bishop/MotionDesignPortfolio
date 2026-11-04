@@ -45,7 +45,7 @@
     .map(
       (s) => `
       <div class="pd-extra-item">
-        <video src="${s.src}" muted loop playsinline controls preload="metadata" aria-label="${s.label}"></video>
+        <video src="${s.src}" muted loop playsinline controls preload="metadata" aria-label="${s.label}" oncontextmenu="return false;" controlsList="nodownload"></video>
       </div>`
     )
     .join("");
@@ -53,7 +53,7 @@
   const btsHTML = project.bts
     ? `
       <div class="pd-extra-item">
-        <video src="${project.bts}" muted loop playsinline controls preload="metadata" aria-label="Behind the scenes"></video>
+        <video src="${project.bts}" muted loop playsinline controls preload="metadata" aria-label="Behind the scenes" oncontextmenu="return false;" controlsList="nodownload"></video>
       </div>`
     : "";
 
@@ -75,7 +75,7 @@
       <div class="container">
         <div class="pd-main-media-wrap">
           <div class="pd-main-media">
-            <video src="${project.mainVideo}" controls preload="metadata" poster="${project.poster || ""}"></video>
+            <video src="${project.mainVideo}" controls preload="metadata" poster="${project.poster || ""}" oncontextmenu="return false;" controlsList="nodownload"></video>
           </div>
         </div>
 

@@ -322,7 +322,7 @@ function projectCardHTML(project, forceUnlocked) {
     <a class="project-card" href="project.html?p=${project.slug}" data-categories="${cats}" data-reveal>
       <div class="card-media">
         <div class="thumb-bg" style="background:${project.thumb.bg}"></div>
-        ${project.mainVideo ? `<video class="card-preview" src="${project.mainVideo}" muted loop playsinline preload="none" aria-hidden="true"></video>` : ""}
+        ${project.mainVideo ? `<video class="card-preview" src="${project.mainVideo}" muted loop playsinline preload="none" aria-hidden="true" oncontextmenu="return false;" controlsList="nodownload"></video>` : ""}
         <div class="thumb-overlay"></div>
         <span class="card-tag">${project.thumb.label}</span>
       </div>
