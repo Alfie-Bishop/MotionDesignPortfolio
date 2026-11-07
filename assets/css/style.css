@@ -816,31 +816,20 @@ button { font-family: inherit; }
 .concepts-hero h1 { font-size: clamp(36px, 5vw, 56px); margin: 16px 0 20px; }
 .concepts-hero p.lead { color: var(--text-muted); font-size: 17px; max-width: 560px; }
 
-.concepts-carousel-section { padding-bottom: 120px; }
-/* same width and faded edges as the homepage project carousel */
-.concept-wrap {
-  width: calc(min(100%, var(--container)) - 64px);
-  margin: 0 auto;
-  height: 460px;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+.concepts-collage-section { padding-bottom: 120px; }
+/* masonry collage: CSS columns let every image keep its own shape while
+   the tiles pack tightly - 3 columns on desktop, 2 on tablets, 1 on phones */
+.concept-grid {
+  column-count: 3;
+  column-gap: 20px;
 }
-/* scrolled by startMarquee() in main.js */
-.concept-track {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  width: max-content;
-  height: 100%;
-  will-change: transform;
-}
-/* each slide keeps its own aspect ratio at a fixed height; display only */
+/* display only */
 .concept-slide {
-  flex: none;
   display: block;
-  height: 100%;
-  width: auto;
+  width: 100%;
+  height: auto;
+  margin-bottom: 20px;
+  break-inside: avoid;
   border-radius: var(--radius);
   border: 1px solid var(--line);
   user-select: none;
@@ -851,15 +840,10 @@ button { font-family: inherit; }
 .concept-status { text-align: center; }
 
 @media (max-width: 1080px) {
-  .concept-wrap { height: 340px; }
+  .concept-grid { column-count: 2; }
 }
 @media (max-width: 600px) {
   .concepts-hero { padding: 130px 0 40px; }
-  /* phones: edge to edge with no fade, like the homepage carousel */
-  .concept-wrap {
-    width: 100%;
-    height: 240px;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
+  .concept-grid { column-count: 1; }
+  .concept-slide { margin-bottom: 16px; }
 }
