@@ -808,3 +808,58 @@ button { font-family: inherit; }
 .specialty-item .s-index { font-size: 13px; color: var(--accent); font-family: "Space Grotesk", sans-serif; margin-bottom: 14px; }
 .specialty-item h4 { font-size: 17px; margin-bottom: 8px; }
 .specialty-item p { font-size: 14px; color: var(--text-muted); }
+
+/* =========================================================================
+   CONCEPT IDEAS PAGE
+   ========================================================================= */
+.concepts-hero { padding: 170px 0 56px; }
+.concepts-hero h1 { font-size: clamp(36px, 5vw, 56px); margin: 16px 0 20px; }
+.concepts-hero p.lead { color: var(--text-muted); font-size: 17px; max-width: 560px; }
+
+.concepts-carousel-section { padding-bottom: 120px; }
+/* same width and faded edges as the homepage project carousel */
+.concept-wrap {
+  width: calc(min(100%, var(--container)) - 64px);
+  margin: 0 auto;
+  height: 460px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+/* scrolled by startMarquee() in main.js */
+.concept-track {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: max-content;
+  height: 100%;
+  will-change: transform;
+}
+/* each slide keeps its own aspect ratio at a fixed height; display only */
+.concept-slide {
+  flex: none;
+  display: block;
+  height: 100%;
+  width: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+.concept-status { text-align: center; }
+
+@media (max-width: 1080px) {
+  .concept-wrap { height: 340px; }
+}
+@media (max-width: 600px) {
+  .concepts-hero { padding: 130px 0 40px; }
+  /* phones: edge to edge with no fade, like the homepage carousel */
+  .concept-wrap {
+    width: 100%;
+    height: 240px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}

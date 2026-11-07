@@ -11,7 +11,7 @@
 document.addEventListener(
   "contextmenu",
   (e) => {
-    if (e.target.closest("video")) e.preventDefault();
+    if (e.target.closest("video, .concept-slide")) e.preventDefault();
   },
   true
 );
