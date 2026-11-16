@@ -61,20 +61,8 @@
 <script>
   document.getElementById("year").textContent = new Date().getFullYear();
 
-  const UNLOCK_PASSWORD = "Alfie01";
-  const UNLOCK_STORAGE_KEY = "projectsUnlockedUntil";
-  const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
-
-  function getUnlockExpiry() {
-    return Number(localStorage.getItem(UNLOCK_STORAGE_KEY)) || 0;
-  }
-  function isUnlockActive() {
-    return Date.now() < getUnlockExpiry();
-  }
-  function startUnlock() {
-    localStorage.setItem(UNLOCK_STORAGE_KEY, String(Date.now() + UNLOCK_DURATION_MS));
-  }
-
+  // UNLOCK_PASSWORD, getUnlockExpiry(), isUnlockActive() and startUnlock()
+  // live in main.js so project pages share the same lock.
   (async () => {
     await window.CMS_READY;
 

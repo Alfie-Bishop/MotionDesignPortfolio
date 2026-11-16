@@ -26,11 +26,22 @@
     return;
   }
 
+  // Locked (agency-confidential) projects need the password, the same one as
+  // the Projects page - otherwise a direct link or the previous/next links
+  // would open them. Nothing about the project is shown until it's unlocked.
+  const unlocked = isUnlockActive();
+  if (project.locked && !unlocked) {
+    renderLockedProject(main);
+    return;
+  }
+
   document.title = `${project.title} — Alfie Bishop`;
 
-  const index = PROJECTS.findIndex((p) => p.slug === project.slug);
-  const prev = PROJECTS[(index - 1 + PROJECTS.length) % PROJECTS.length];
-  const next = PROJECTS[(index + 1) % PROJECTS.length];
+  // Previous/next only step through projects this visitor can see.
+  const visible = unlocked ? PROJECTS : PROJECTS.filter((p) => !p.locked);
+  const index = visible.findIndex((p) => p.slug === project.slug);
+  const prev = visible[(index - 1 + visible.length) % visible.length];
+  const next = visible[(index + 1) % visible.length];
 
   const metaItems = [
     project.client ? { label: "Client", value: project.client } : null,
@@ -115,6 +126,45 @@
 
   matchMainMediaRatio(main.querySelector(".pd-main-media"));
 })();
+
+// Shown in place of a locked project: a password box that unlocks every
+// locked project for 5 minutes (shared with the Projects page), then
+// reloads to show this one.
+function renderLockedProject(main) {
+  document.title = "Locked project — Alfie Bishop";
+  main.innerHTML = `
+    <section class="project-detail-hero">
+      <div class="container">
+        <span class="eyebrow">Locked</span>
+        <h1>This project is locked.</h1>
+        <p class="lead locked-lead">
+          It's linked to the agency I made it with, so it's password protected. Enter the password to view it.
+        </p>
+        <form class="disclaimer-form locked-form" id="unlock-form">
+          <input type="password" id="unlock-password" placeholder="Password" autocomplete="off" aria-label="Password" />
+          <button type="submit" class="btn btn-primary">Unlock</button>
+        </form>
+        <p class="disclaimer-feedback" id="unlock-feedback"></p>
+        <div style="margin-top:32px;"><a href="projects.html" class="btn btn-ghost">View all projects</a></div>
+      </div>
+    </section>`;
+
+  const form = document.getElementById("unlock-form");
+  const input = document.getElementById("unlock-password");
+  const feedback = document.getElementById("unlock-feedback");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (input.value === UNLOCK_PASSWORD) {
+      startUnlock();
+      location.reload();
+    } else {
+      feedback.textContent = "Incorrect password — try again.";
+      feedback.classList.add("is-error");
+      input.value = "";
+      input.focus();
+    }
+  });
+}
 
 // Sizes the main video frame to the video's own aspect ratio (see
 // .pd-main-media in style.css) once its metadata loads. The poster can't be

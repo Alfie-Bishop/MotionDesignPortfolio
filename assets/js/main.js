@@ -309,6 +309,33 @@ function initCardPreviews(root) {
   return schedule;
 }
 
+/* =========================================================================
+   LOCKED PROJECTS
+   Projects marked "Locked" in the CMS (agency-confidential) stay hidden
+   until the password is entered on the Projects page or a locked project
+   page. The unlock lasts 5 minutes and is shared by every page through a
+   timestamp in localStorage.
+   ========================================================================= */
+const UNLOCK_PASSWORD = "Alfie01";
+const UNLOCK_STORAGE_KEY = "projectsUnlockedUntil";
+const UNLOCK_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
+function getUnlockExpiry() {
+  try {
+    return Number(localStorage.getItem(UNLOCK_STORAGE_KEY)) || 0;
+  } catch (e) {
+    return 0;
+  }
+}
+function isUnlockActive() {
+  return Date.now() < getUnlockExpiry();
+}
+function startUnlock() {
+  try {
+    localStorage.setItem(UNLOCK_STORAGE_KEY, String(Date.now() + UNLOCK_DURATION_MS));
+  } catch (e) {}
+}
+
 function projectCardHTML(project, forceUnlocked) {
   const cats = project.categories.join(" ");
   const locked = project.locked && !forceUnlocked;
